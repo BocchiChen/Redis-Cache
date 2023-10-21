@@ -80,6 +80,11 @@ public class Cache<K, V> implements ICache<K, V> {
     }
 
     @Override
+    public ICacheExpire<K, V> expire() {
+        return null;
+    }
+
+    @Override
     public int size() {
         return 0;
     }
