@@ -53,14 +53,14 @@ public class CacheInterceptorContext<K, V> implements ICacheInterceptorContext<K
         return new Object[0];
     }
 
-    public CacheInterceptorContext<K, V> params(Object result){
+    public CacheInterceptorContext<K, V> result(Object result){
         this.result = result;
         return this;
     }
 
     @Override
     public Object result() {
-        return null;
+        return this.result;
     }
 
     public CacheInterceptorContext<K, V> startMills(long startMills){

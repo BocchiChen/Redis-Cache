@@ -11,24 +11,24 @@ import java.util.List;
 
 public class CacheInterceptors {
     @SuppressWarnings("all")
-    public List<ICacheInterceptor> defautCommonList(){
+    public static List<ICacheInterceptor> defautCommonList(){
         List<ICacheInterceptor> list = new ArrayList<>();
         list.add(new CacheInterceptorCost());
         return list;
     }
 
     @SuppressWarnings("all")
-    public ICacheInterceptor aof(){
+    public static ICacheInterceptor aof(){
         return new CacheInterceptorAof();
     }
 
     @SuppressWarnings("all")
-    public ICacheInterceptor evict(){
+    public static ICacheInterceptor evict(){
         return new CacheInterceptorEvict();
     }
 
     @SuppressWarnings("all")
-    public List<ICacheInterceptor> defautRefreshList(){
+    public static List<ICacheInterceptor> defautRefreshList(){
         List<ICacheInterceptor> list = new ArrayList<>();
         list.add(new CacheInterceptorRefresh());
         return list;
