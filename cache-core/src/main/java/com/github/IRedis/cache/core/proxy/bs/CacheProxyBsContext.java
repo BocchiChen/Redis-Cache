@@ -15,7 +15,7 @@ public class CacheProxyBsContext implements ICacheProxyBsContext{
 
     private CacheInterceptor interceptor;
 
-    public CacheProxyBsContext newInstance(){
+    public static CacheProxyBsContext newInstance(){
         return new CacheProxyBsContext();
     }
 
@@ -35,6 +35,7 @@ public class CacheProxyBsContext implements ICacheProxyBsContext{
         return this;
     }
 
+    @Override
     public ICacheProxyBsContext params(Object[] params){
         this.params = params;
         return this;

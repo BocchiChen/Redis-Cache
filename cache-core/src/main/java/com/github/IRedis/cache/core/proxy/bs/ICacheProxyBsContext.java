@@ -12,6 +12,8 @@ public interface ICacheProxyBsContext {
 
     ICacheProxyBsContext target(final ICache target);
 
+    ICacheProxyBsContext params(Object[] params);
+
     Object[] params();
 
     Method method();

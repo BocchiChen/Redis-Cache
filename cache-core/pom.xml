@@ -32,6 +32,11 @@
             <artifactId>heaven</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>3.3.0</version> <!-- 使用适合你的版本 -->
+        </dependency>
     </dependencies>
 
 
