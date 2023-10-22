@@ -9,7 +9,7 @@ public class CacheLoads {
         return new CacheLoadNone<>();
     }
 
-    public static <K,V> ICacheLoad<K,V> dbJson(final String dbPath) {
+    public static <K,V> ICacheLoad<K,V> rdb(final String dbPath) {
         return new CacheLoadRdb<>(dbPath);
     }
 
