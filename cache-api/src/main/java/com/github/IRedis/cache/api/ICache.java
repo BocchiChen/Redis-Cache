@@ -31,4 +31,6 @@ public interface ICache<K, V> extends Map<K, V> {
 
     ICacheExpire<K, V> expire();
 
+    ICacheLoad<K,V> load();
+
 }

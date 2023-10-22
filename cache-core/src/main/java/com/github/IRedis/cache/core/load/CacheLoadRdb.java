@@ -26,7 +26,7 @@ public class CacheLoadRdb<K, V> implements ICacheLoad<K, V> {
     }
 
     @Override
-    @SuppressWarnings("all")
+    @SuppressWarnings("unchecked")
     public void load(ICache<K, V> cache) {
         List<String> lines = FileUtil.readAllLines(dbPath);
         log.info("[load] 开始处理 path: {}", dbPath);
@@ -50,6 +50,7 @@ public class CacheLoadRdb<K, V> implements ICacheLoad<K, V> {
             if(!ObjectUtil.isNull(expire)) {
                 cache.expireAt(key, expire);
             }
+            // 需要加策略和过期索引
         }
     }
 }
