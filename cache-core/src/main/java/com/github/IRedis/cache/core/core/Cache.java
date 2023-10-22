@@ -1,5 +1,6 @@
 package com.github.IRedis.cache.core.core;
 
+import com.github.IRedis.cache.annotation.CacheInterceptor;
 import com.github.IRedis.cache.api.*;
 import com.github.IRedis.cache.api.*;
 
@@ -55,8 +56,10 @@ public class Cache<K, V> implements ICache<K, V> {
     }
 
     @Override
+    @CacheInterceptor(aof = true)
     public ICache<K, V> expireAt(K key, long timeInMills) {
-        return null;
+        this.expire.expire(key, timeInMills);
+        return this;
     }
 
     @Override
