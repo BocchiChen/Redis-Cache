@@ -12,6 +12,7 @@ import com.github.IRedis.cache.core.support.evict.CacheEvictContext;
 import com.github.IRedis.cache.core.support.expire.CacheExpire;
 import com.github.IRedis.cache.core.util.ObjectUtil;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class Cache<K,V> implements ICache<K,V> {
@@ -176,11 +177,10 @@ public class Cache<K,V> implements ICache<K,V> {
      *
      * @since 0.0.7
      */
-    public void init() {
+    public void init() throws InvocationTargetException, IllegalAccessException {
         this.expire = new CacheExpire<>(this);
         this.load.load(this);
 
-        // 初始化持久化
         if (this.persist != null) {
             new InnerCachePersist<>(this, persist);
         }
