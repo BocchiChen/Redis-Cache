@@ -1,45 +1,185 @@
 package com.github.IRedis.cache.core.bs;
 
 import com.github.IRedis.cache.api.ICacheEvict;
+import com.github.IRedis.cache.core.core.Cache;
+import com.github.IRedis.cache.core.listener.remove.CacheRemoveListeners;
+import com.github.IRedis.cache.core.listener.slow.CacheSlowListener;
+import com.github.IRedis.cache.core.listener.slow.CacheSlowListeners;
+import com.github.IRedis.cache.core.load.CacheLoads;
+import com.github.IRedis.cache.core.persist.CachePersists;
+import com.github.IRedis.cache.core.proxy.CacheProxy;
 import com.github.IRedis.cache.core.support.evict.CacheEvicts;
 import com.github.IRedis.cache.core.util.ArgUtil;
 import com.github.IRedis.cache.api.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CacheBs<K, V> {
     private CacheBs(){}
 
-    public static <K, V> CacheBs<K, V> newInstance(){
+    /**
+     * 创建对象实例
+     * @param <K> key
+     * @param <V> value
+     * @return this
+     * @since 0.0.2
+     */
+    public static <K,V> CacheBs<K,V> newInstance() {
         return new CacheBs<>();
     }
 
-    /*
-     * 缓存关联map
+    /**
+     * map 实现
+     * @since 0.0.2
      */
-    private Map<K, V> map = new HashMap<>();
+    private Map<K,V> map = new HashMap<>();
 
-    /*
-    * 缓存大小
+    /**
+     * 大小限制
+     * @since 0.0.2
      */
     private int size = Integer.MAX_VALUE;
 
-    private ICacheEvict<K, V> cacheEvict = CacheEvicts.fifo();
+    /**
+     * 驱除策略
+     * @since 0.0.2
+     */
+    private ICacheEvict<K,V> evict = CacheEvicts.fifo();
 
+    /**
+     * 删除监听类
+     * @since 0.0.6
+     */
+    private final List<ICacheRemoveListener<K,V>> removeListeners = CacheRemoveListeners.defaults();
 
-    CacheBs<K, V> map(Map<K, V> map){
-        ArgUtil.notNull(map, "CacheMap");
+    /**
+     * 慢操作监听类
+     * @since 0.0.9
+     */
+    private final List<ICacheSlowListener> slowListeners = CacheSlowListeners.none();
+
+    /**
+     * 加载策略
+     * @since 0.0.7
+     */
+    private ICacheLoad<K,V> load = CacheLoads.none();
+
+    /**
+     * 持久化实现策略
+     * @since 0.0.8
+     */
+    private ICachePersist<K,V> persist = CachePersists.none();
+
+    /**
+     * map 实现
+     * @param map map
+     * @return this
+     * @since 0.0.2
+     */
+    public CacheBs<K, V> map(Map<K, V> map) {
+        ArgUtil.notNull(map, "map");
+
         this.map = map;
         return this;
     }
 
-    CacheBs<K, V> size(int size){
-        ArgUtil.notNegative(size, "CacheSize");
+    /**
+     * 设置 size 信息
+     * @param size size
+     * @return this
+     * @since 0.0.2
+     */
+    public CacheBs<K, V> size(int size) {
+        ArgUtil.notNegative(size, "size");
+
         this.size = size;
         return this;
     }
 
+    /**
+     * 设置驱除策略
+     * @param evict 驱除策略
+     * @return this
+     * @since 0.0.2
+     */
+    public CacheBs<K, V> evict(ICacheEvict<K, V> evict) {
+        ArgUtil.notNull(evict, "evict");
 
+        this.evict = evict;
+        return this;
+    }
+
+    /**
+     * 设置加载
+     * @param load 加载
+     * @return this
+     * @since 0.0.7
+     */
+    public CacheBs<K, V> load(ICacheLoad<K, V> load) {
+        ArgUtil.notNull(load, "load");
+
+        this.load = load;
+        return this;
+    }
+
+    /**
+     * 添加删除监听器
+     * @param removeListener 监听器
+     * @return this
+     * @since 0.0.6
+     */
+    public CacheBs<K, V> addRemoveListener(ICacheRemoveListener<K,V> removeListener) {
+        ArgUtil.notNull(removeListener, "removeListener");
+
+        this.removeListeners.add(removeListener);
+        return this;
+    }
+
+    /**
+     * 添加慢日志监听器
+     * @param slowListener 监听器
+     * @return this
+     * @since 0.0.9
+     */
+    public CacheBs<K, V> addSlowListener(ICacheSlowListener slowListener) {
+        ArgUtil.notNull(slowListener, "slowListener");
+
+        this.slowListeners.add(slowListener);
+        return this;
+    }
+
+    /**
+     * 设置持久化策略
+     * @param persist 持久化
+     * @return this
+     * @since 0.0.8
+     */
+    public CacheBs<K, V> persist(ICachePersist<K, V> persist) {
+        this.persist = persist;
+        return this;
+    }
+
+    /**
+     * 构建缓存信息
+     * @return 缓存信息
+     * @since 0.0.2
+     */
+    public ICache<K,V> build() throws InvocationTargetException, IllegalAccessException {
+        Cache<K,V> cache = new Cache<>();
+        cache.map(map);
+        cache.evict(evict);
+        cache.sizeLimit(size);
+        cache.removeListeners(removeListeners);
+        cache.load(load);
+        cache.persist(persist);
+        cache.slowListeners(slowListeners);
+
+        // 初始化
+        cache.init();
+        return CacheProxy.getProxy(cache);
+    }
 
 }

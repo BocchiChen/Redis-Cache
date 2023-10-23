@@ -8,11 +8,11 @@ import java.util.List;
 public class CacheSlowListeners {
     private CacheSlowListeners(){}
 
-    private static List<ICacheSlowListener> none(){
+    public static List<ICacheSlowListener> none(){
         return new ArrayList<>();
     }
 
-    private static ICacheSlowListener defaults(){
+    public static ICacheSlowListener defaults(){
         return new CacheSlowListener();
     }
 }
